@@ -12,6 +12,7 @@ type MySQLConfig struct {
 	Username   string `json:"username" yaml:"username"`
 	Password   string `json:"password" yaml:"password"`
 	CheckRate  int    `json:"check_rate" yaml:"check-rate"`
+	NodeID     int    `json:"node_id" yaml:"node_id"`
 }
 
 type Config struct {

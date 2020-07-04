@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -44,6 +45,23 @@ func (a *Authenticator) updater() {
 					a.DelUser(hash)
 				}
 			}
+			//update node status
+			cfg := config.FromContext(a.ctx, Name).(*Config)
+			nodeid := cfg.MySQL.NodeID
+			if nodeid == 0 {
+				log.Error(common.NewError("node_id configuration error").Base(err))
+			}
+			u, err := a.db.Exec("UPDATE `ss_node` SET `node_heartbeat`=?,`node_bandwidth`=`node_bandwidth`+?+? WHERE `id`=?", time.Now().Unix(), recv, sent, nodeid)
+			if err != nil {
+				log.Error(common.NewError("failed to update data to ss_node table").Base(err))
+				continue
+			}
+			if n, err := u.RowsAffected(); err != nil {
+				if n == 0 {
+					log.Error(common.NewError("failed to update data to node_id " + strconv.Itoa(nodeid)).Base(err))
+				}
+			}
+			//update node traffic
 		}
 		log.Info("buffered data has been written into the database")
 
