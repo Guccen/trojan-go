@@ -45,6 +45,8 @@ func (a *Authenticator) updater() {
 					a.DelUser(hash)
 				}
 			}
+			/* GetIP := user.GetIP()
+			log.Infof("IP链接数：" + strconv.Itoa(GetIP)) */
 			//update node status
 			cfg := config.FromContext(a.ctx, Name).(*Config)
 			nodeid := cfg.MySQL.NodeID
